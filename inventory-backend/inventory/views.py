@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from django.db.models import F 
+from rest_framework import filters
 from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated
 from .models import Category, Item
@@ -19,6 +20,10 @@ class CategoryView(viewsets.ModelViewSet):
 class ItemView(viewsets.ModelViewSet):
     serializer_class = ItemSerial
     permission_classes = [IsAuthenticated]
+
+    filter_field = ['category']
+    search_field = ['name', 'description']
+    ordering_field = ['quantity', 'created_at']
 
     def get_queryset(self):
         queryset = Item.objects.filter(owner=self.request.user)
