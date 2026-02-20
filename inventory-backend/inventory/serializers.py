@@ -7,6 +7,7 @@ class CategorySerial(serializers.ModelSerializer):
         fields = ['id', 'name']
 
 class ItemSerial(serializers.ModelSerializer):
+    is_low = serializers.SerializerMethodField()
     class Meta:
         model = Item
         fields = [
@@ -16,7 +17,8 @@ class ItemSerial(serializers.ModelSerializer):
             'quantity',
             'category',
             'low_stock',
-            'created_at'
+            'created_at',
+            'is_low'
         ]
 
         read_only_fields = ['created_at']
@@ -26,6 +28,9 @@ class ItemSerial(serializers.ModelSerializer):
         if value < 0:
             raise serializers.ValidationError('Quantity cannot be negative')
         return value
+    
+    def is_low(self, obj):
+        return obj.quantity <= obj.low_stock
     
 
     

@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from django.db.models import F 
 from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated
 from .models import Category, Item
@@ -20,7 +21,11 @@ class ItemView(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        return Item.objects.filter(owner=self.request.user)
+        queryset = Item.objects.filter(owner=self.request.user)
+        low = self.request.query_param.get('low')
+        if low == 'true':
+            queryset = queryset.filter(quantity__lte=F('low_stock'))
+        return queryset
     
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
