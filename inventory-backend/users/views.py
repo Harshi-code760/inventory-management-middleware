@@ -1,23 +1,19 @@
-from django.shortcuts import render
+# from django.shortcuts import render
 from rest_framework import generics
-from django.contrib.auth.models import User
-from .serializers import Register
+# from django.contrib.auth.models import User
+from .serializers import Register , UserProfile
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.response import Response
-from rest_framework.views import APIView
-
+# from rest_framework.response import Response
+# from rest_framework.views import APIView
+from .models import CustomUser
 
 class RegisterView(generics.CreateAPIView):
-    queryset = User.objects.all()
+    queryset = CustomUser.objects.all()
     serializer_class = Register
 
-class Profile(APIView):
+class Profile(generics.RetrieveUpdate):
     permission_classes = [IsAuthenticated]
+    serializer_class = UserProfile
 
-    def get(self, request):
-        user = request.user
-        return Response({
-            "id": user.id,
-            "username": user.username,
-            "email": user.email
-        })
+    def get_object(self):
+        return self.request.user
