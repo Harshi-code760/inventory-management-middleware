@@ -21,3 +21,22 @@ class Item(models.Model):
     
     def __str__(self):
         return self.name
+    
+class StockHistory(models.Model):
+    item = models.ForeignKey(
+        Item,
+        on_delete=models.CASCADE,
+        related="history"
+    )
+    changed_by = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True
+    )
+    old=models.IntegerField()
+    new=models.IntegerField()
+    changed=models.DateTimeField(auto_now_add=True)
+
+
+    def __str__(self):
+        return f"{self.item.name}: {self.old} → {self.new}"
