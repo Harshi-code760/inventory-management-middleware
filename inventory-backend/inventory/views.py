@@ -28,7 +28,7 @@ class ItemView(viewsets.ModelViewSet):
 
     def get_queryset(self):
         queryset = Item.objects.filter(owner=self.request.user)
-        low = self.request.query_param.get('low')
+        low = self.request.query_params.get('low')
         if low == 'true':
             queryset = queryset.filter(quantity__lte=F('low_stock'))
         return queryset

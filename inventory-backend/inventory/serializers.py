@@ -16,6 +16,7 @@ class StockHistorySerial(serializers.ModelSerializer):
 class ItemSerial(serializers.ModelSerializer):
     is_low = serializers.SerializerMethodField()
     history = StockHistorySerial(many=True, read_only=True)
+
     class Meta:
         model = Item
         fields = [
@@ -32,7 +33,7 @@ class ItemSerial(serializers.ModelSerializer):
 
         read_only_fields = ['created_at']
 
-    def is_low(self, obj):
+    def get_is_low(self, obj):
         return obj.quantity <= obj.low_stock
     
 
