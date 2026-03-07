@@ -27,7 +27,7 @@ class StockHistory(models.Model):
     item = models.ForeignKey(
         Item,
         on_delete=models.CASCADE,
-        related="history"
+        related_name="history"
     )
     changed_by = models.ForeignKey(
         settings.AUTH_USER_MODEL,
