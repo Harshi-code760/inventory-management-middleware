@@ -5,7 +5,7 @@ from rest_framework.permissions import IsAuthenticated
 from .models import StockHistory, Item, Category
 from rest_framework import viewsets, status
 from rest_framework.response import Response
-from .serializers import CategorySerial, ItemSerial
+from .serializers import CategorySerial, ItemSerial, StockHistorySerial
 
 
 class CategoryView(viewsets.ModelViewSet):
@@ -53,6 +53,9 @@ class ItemView(viewsets.ModelViewSet):
                 old=old_quantity,
                 new=new_quantity
             )
+        
+        if updated_item.quantity <= updated_item.low_stock:
+            print(f"ALERT: {updated_item.name} is low on stock! ({updated_item.quantity} left)")
     
     def update(self, request, *args, **kwargs):
         new_qty = request.data.get('quantity')
