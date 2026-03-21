@@ -1,11 +1,11 @@
-from django.shortcuts import render
 from django.db.models import F 
 from rest_framework import filters
 from rest_framework.permissions import IsAuthenticated
 from .models import StockHistory, Item, Category
 from rest_framework import viewsets, status
 from rest_framework.response import Response
-from .serializers import CategorySerial, ItemSerial, StockHistorySerial
+from .serializers import CategorySerial, ItemSerial
+from .emails import send_low_stock_alert
 
 
 class CategoryView(viewsets.ModelViewSet):
@@ -13,21 +13,21 @@ class CategoryView(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        return Category.objects.filter(owner=self.request.user)
+        return Category.objects.filter(owner=self.request.user).order_by('id')
     
     def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
+        serializer.save(owner=self.request.user)
 
 class ItemView(viewsets.ModelViewSet):
     serializer_class = ItemSerial
     permission_classes = [IsAuthenticated]
 
-    filter_field = ['category']
-    search_field = ['name', 'description']
-    ordering_field = ['quantity', 'created_at']
+    filter_fields = ['category']
+    search_fields = ['name', 'description']
+    ordering_fields = ['quantity', 'created_at']
 
     def get_queryset(self):
-        queryset = Item.objects.filter(owner=self.request.user)
+        queryset = Item.objects.filter(owner=self.request.user).order_by('id')
         low = self.request.query_params.get('low')
         if low == 'true':
             queryset = queryset.filter(quantity__lte=F('low_stock'))
@@ -43,9 +43,6 @@ class ItemView(viewsets.ModelViewSet):
         updated_item = serializer.save()
         new_quantity = updated_item.quantity
 
-        updated_item = serializer.save()
-        new_quantity = updated_item.quantity
-
         if old_quantity != new_quantity:
             StockHistory.objects.create(
                 item=updated_item,
@@ -55,7 +52,8 @@ class ItemView(viewsets.ModelViewSet):
             )
         
         if updated_item.quantity <= updated_item.low_stock:
-            print(f"ALERT: {updated_item.name} is low on stock! ({updated_item.quantity} left)")
+            user_email = self.request.user.email
+            send_low_stock_alert(updated_item, user_email)
     
     def update(self, request, *args, **kwargs):
         new_qty = request.data.get('quantity')

@@ -6,7 +6,14 @@ from django.conf import settings
 
 class Category(models.Model):
     name = models.CharField(max_length=100)
-    owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    owner = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='categories'
+    )
+
+    class Meta:
+        ordering = ['id']
 
     def __str__(self):
         return self.name
@@ -19,6 +26,9 @@ class Item(models.Model):
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     low_stock = models.IntegerField(default=5)
     created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['id']
     
     def __str__(self):
         return self.name
