@@ -136,8 +136,8 @@ CORS_ALLOW_HEADERS = [
 ]
 
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:5173",
     "http://localhost:3000",
+    "http://localhost:5173",
 ]
 
 CORS_ALLOW_CREDENTIALS = True
@@ -168,3 +168,4 @@ SIMPLE_JWT = {
 STATIC_URL = "static/"
 SENDGRID_API_KEY = os.getenv('SENDGRID_API_KEY')
 FROM_EMAIL = os.getenv('FROM_EMAIL')
+FRONTEND_URL = os.getenv('FRONTEND_URL', 'http://localhost:3000')
