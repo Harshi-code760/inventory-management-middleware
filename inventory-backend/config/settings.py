@@ -28,7 +28,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.getenv("SECRET_KEY", "your-fallback-insecure-key")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv('DEBUG', 'False') == 'True'
 
 ALLOWED_HOSTS = ['localhost', '127.0.0.1', '.onrender.com', '.app.github.dev',]
 
@@ -137,13 +137,14 @@ CORS_ALLOW_HEADERS = [
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
-    "http://localhost:5173",
+    "https://inventory-management-1-wuat.onrender.com",
 ]
 
 CORS_ALLOW_CREDENTIALS = True
 
 CORS_ALLOWED_ORIGIN_REGEXES = [
     r"^https://.*\.app\.github\.dev$",
+    r"^https://.*\.onrender\.com$",
 ]
 
 # Internationalization
@@ -166,9 +167,9 @@ SIMPLE_JWT = {
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
 STATIC_URL = "static/"
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
 SENDGRID_API_KEY = os.getenv('SENDGRID_API_KEY')
 FROM_EMAIL = os.getenv('FROM_EMAIL')
 FRONTEND_URL = os.getenv('FRONTEND_URL', 'http://localhost:3000')
-
-import os
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
