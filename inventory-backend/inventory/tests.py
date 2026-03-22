@@ -64,3 +64,19 @@ class InventoryTests(APITestCase):
         url = reverse('item-detail', args=[item.id])
         self.client.patch(url, {'quantity': 8})
         self.assertFalse(mock_sg.return_value.send.called)
+
+    def test_unauthenticated_access_blocked(self):
+        self.client.force_authenticate(user=None)
+        response = self.client.get('/api/items/')
+        self.assertEqual(response.status_code, 401)
+
+    def test_profile_update(self):
+        from users.models import CustomUser
+        response = self.client.patch('/api/auth/profile/', {'bio': 'Test bio'})
+        self.client.force_authenticate(user=self.user)
+        response = self.client.patch('/api/auth/profile/', {'bio': 'Test bio'})
+        self.assertEqual(response.status_code, 200)
+        self.user.refresh_from_db()
+        self.assertEqual(self.user.bio, 'Test bio')
+
+

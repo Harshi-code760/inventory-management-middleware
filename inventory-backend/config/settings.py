@@ -30,7 +30,7 @@ SECRET_KEY = os.getenv("SECRET_KEY", "your-fallback-insecure-key")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', '.onrender.com', '.app.github.dev',]
 
 
 # Application definition
@@ -169,3 +169,6 @@ STATIC_URL = "static/"
 SENDGRID_API_KEY = os.getenv('SENDGRID_API_KEY')
 FROM_EMAIL = os.getenv('FROM_EMAIL')
 FRONTEND_URL = os.getenv('FRONTEND_URL', 'http://localhost:3000')
+
+import os
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
