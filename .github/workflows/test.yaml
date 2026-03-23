@@ -25,14 +25,16 @@ jobs:
           cd inventory-backend
           pip install -r requirements.txt
 
-      - name: Run Tests
+      - name: Run Tests with coverage 
         env: 
           SECRET_KEY: test-secret-key-for-ci
           DEBUG: True
           DATABASE_URL: sqlite:///test-db.sqlite3
         run: |
           cd inventory-backend
-          python manage.py test
+          pip install coverage
+          coverage run manage.py test
+          coverage report
 
           
 
