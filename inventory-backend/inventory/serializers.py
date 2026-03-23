@@ -16,6 +16,7 @@ class StockHistorySerial(serializers.ModelSerializer):
 class ItemSerial(serializers.ModelSerializer):
     is_low = serializers.SerializerMethodField()
     history = StockHistorySerial(many=True, read_only=True)
+    category_name = serializers.SerializerMethodField()
 
     class Meta:
         model = Item
@@ -25,6 +26,7 @@ class ItemSerial(serializers.ModelSerializer):
             'description',
             'quantity',
             'category',
+            'category_name',
             'low_stock',
             'created_at',
             'is_low',
@@ -35,6 +37,11 @@ class ItemSerial(serializers.ModelSerializer):
 
     def get_is_low(self, obj):
         return obj.quantity <= obj.low_stock
+    
+    def get_category_name(self, obj):
+        if obj.category:
+            return obj.category.name
+        return 'Uncategorised'
     
 
     
